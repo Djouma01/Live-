@@ -1,0 +1,166 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Profil utilisateur authentifié DJOUMA FOOT LIVE (isolé au propriétaire uniquement).",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 160
+        },
+        "photoUrl": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "displayName", "email", "createdAt", "updatedAt"]
+    },
+    "UserPreferences": {
+      "title": "UserPreferences",
+      "description": "Préférences d'équipes favorites, compétitions suivies et alertes FCM/notifications de l'utilisateur.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "favoriteClubIds": {
+          "type": "array",
+          "description": "Liste bornée des IDs de clubs favoris (max 50)."
+        },
+        "favoriteCompetitionIds": {
+          "type": "array",
+          "description": "Liste bornée des IDs de compétitions favorites (max 50)."
+        },
+        "notificationsEnabled": {
+          "type": "boolean"
+        },
+        "kickoffAlerts": {
+          "type": "boolean"
+        },
+        "goalAlerts": {
+          "type": "boolean"
+        },
+        "cardAlerts": {
+          "type": "boolean"
+        },
+        "halftimeFulltimeAlerts": {
+          "type": "boolean"
+        },
+        "fcmToken": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "favoriteClubIds",
+        "favoriteCompetitionIds",
+        "notificationsEnabled",
+        "updatedAt"
+      ]
+    },
+    "LiveCacheDoc": {
+      "title": "LiveCacheDoc",
+      "description": "Cache public en lecture seule des scores en direct et de l'horodatage de synchronisation Sportradar/officiel.",
+      "type": "object",
+      "properties": {
+        "cacheId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "provider": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "isPublic": {
+          "type": "boolean"
+        },
+        "lastRealUpdateIso": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "matchCount": {
+          "type": "number"
+        },
+        "liveCount": {
+          "type": "number"
+        }
+      },
+      "required": ["cacheId", "provider", "isPublic", "lastRealUpdateIso"]
+    },
+    "CompetitionCatalogDoc": {
+      "title": "CompetitionCatalogDoc",
+      "description": "Catalogue public en lecture seule des compétitions synchronisées depuis Sportradar Soccer v4.",
+      "type": "object",
+      "properties": {
+        "competitionId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "country": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "divisionLabel": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "isPublic": {
+          "type": "boolean"
+        }
+      },
+      "required": ["competitionId", "name", "country", "isPublic"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Profils utilisateurs privés accessibles uniquement par leur propriétaire."
+    },
+    "/users/{userId}/preferences/{prefId}": {
+      "schema": { "$ref": "#/entities/UserPreferences" },
+      "description": "Préférences et abonnements aux notifications par utilisateur."
+    },
+    "/live_cache/{cacheId}": {
+      "schema": { "$ref": "#/entities/LiveCacheDoc" },
+      "description": "Snapshots temps réel des scores diffusés aux utilisateurs (écriture serveur uniquement)."
+    },
+    "/competitions_catalog/{competitionId}": {
+      "schema": { "$ref": "#/entities/CompetitionCatalogDoc" },
+      "description": "Catalogue international des compétitions et divisions (écriture serveur uniquement)."
+    }
+  }
+}

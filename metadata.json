@@ -1,0 +1,6 @@
+{
+  "name": "DJOUMA FOOT LIVE",
+  "description": "Application de scores de football en direct, statistiques détaillées, classements, compositions, historique et actualités. Créée par Djouma Coulibaly.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
